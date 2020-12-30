@@ -20,7 +20,7 @@ librarianRouter.post('/add',async (req,res)=>{
         res.status(200).send(librarian)
 
     }catch(e){
-        res.status(404).send({error:'try again'})
+        res.status(404).send({error:'try again!error occruing while add librarian'})
     }
 
 })
@@ -30,9 +30,8 @@ librarianRouter.post('/add',async (req,res)=>{
 librarianRouter.get('/detail/:mobileNumber',authlib,async(req,res)=>{
     try{
 
-        const mobileNumber = parseInt(req.params.mobileNumber)
+        const mobileNumber = req.params.mobileNumber
         const lib =await Librarian.findOne({mobileNumber})
-        console.log(lib)
         if(!lib||lib['access']=='no')
             throw new Error({error:'can not find librarian'});
         res.status(200).send(lib)
@@ -46,7 +45,7 @@ librarianRouter.get('/detail/:mobileNumber',authlib,async(req,res)=>{
 librarianRouter.patch('/update/:mobileNumber',authlib,async(req,res)=>{
 
 
-    const mobileNumber = parseInt(req.params.mobileNumber)
+    const mobileNumber = req.params.mobileNumber
     const lib = await Librarian.findOne({mobileNumber})
     if(!lib||lib['access']=='no')
         throw new Error();
@@ -80,7 +79,7 @@ librarianRouter.patch('/update/:mobileNumber',authlib,async(req,res)=>{
 
 librarianRouter.delete('/delete/:mobileNumber',authlib,async (req,res)=>{
     try{
-        const mobileNumber = parseInt(req.params.mobileNumber)
+        const mobileNumber = req.params.mobileNumber
         const lib =await Librarian.findOne({mobileNumber})
         if(!lib||lib['access']=='no')
              throw new Error();

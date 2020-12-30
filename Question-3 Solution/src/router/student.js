@@ -20,7 +20,7 @@ studentRouter.post('/add',async (req,res)=>{
         res.status(200).send(student)
 
     }catch(e){
-        res.status(404).send({error:'try again'})
+        res.status(404).send({error:'try aerror occuring while add student'})
     }
 
 })
@@ -30,7 +30,7 @@ studentRouter.post('/add',async (req,res)=>{
 studentRouter.get('/detail/:mobileNumber',authLibStu,async(req,res)=>{
     try{
 
-        const mobileNumber = parseInt(req.params.mobileNumber)
+        const mobileNumber = req.params.mobileNumber
         const stu =await Student.findOne({mobileNumber})
         if(!stu||stu['access']=='no')
             throw new Error({error:'can not find librarian'});
@@ -43,7 +43,7 @@ studentRouter.get('/detail/:mobileNumber',authLibStu,async(req,res)=>{
 })
 
 studentRouter.patch('/update/:mobileNumber',authLibStu,async(req,res)=>{
-    const mobileNumber = parseInt(req.params.mobileNumber)
+    const mobileNumber = req.params.mobileNumber
    
     const stu = await Student.findOne({mobileNumber})
     if(!stu||stu['access']=='no')
@@ -78,7 +78,7 @@ studentRouter.patch('/update/:mobileNumber',authLibStu,async(req,res)=>{
 
 studentRouter.delete('/delete/:mobileNumber',authLibStu,async (req,res)=>{
     try{
-        const mobileNumber = parseInt(req.params.mobileNumber)
+        const mobileNumber = req.params.mobileNumber
         const stu = await Student.findOne({mobileNumber})
         if(!stu||stu['access']=='no')
           throw new Error();

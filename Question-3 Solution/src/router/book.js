@@ -12,10 +12,10 @@ bookRouter.post('/add/',authlib,async(req,res)=>{
     try{
         const book = new Book(req.body);
         await book.save();
-        res.send(book)
+        res.status(200).send(book)
 
     }catch(e){
-        res.status.send({error:'error!!!while adding book'})
+        res.status(404).send({error:'error!!!while adding book'})
     }
     
 
@@ -26,7 +26,6 @@ bookRouter.get('/detail/:value',authLibStu,async(req,res)=>{
       
         const bookName = req.params.value;
         const author = req.params.value;
-        console.log(req.params.value)
        
         const book1 = await Book.findOne({bookName})
         const book2 = await Book.findOne({author})

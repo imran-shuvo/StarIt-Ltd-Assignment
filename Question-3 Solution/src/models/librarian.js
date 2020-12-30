@@ -13,9 +13,10 @@ librarianSchema = new mongoose.Schema({
         
     },
     mobileNumber:{
-        type:Number,
+        type:String,
         required:true,
-        unique:true
+        unique:true,
+        match:/^\+?(88)?0?1[3456789][0-9]{8}\b/
         
 
     },
