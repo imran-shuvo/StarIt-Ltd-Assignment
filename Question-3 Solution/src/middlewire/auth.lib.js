@@ -17,9 +17,7 @@ const authLibrarian = async (req,res,next)=>{
                 throw new Error({error:"please login first"})
             }
           
-           
-            req.user  = librarian;
-            req.token = token;
+
 
             next()
         }catch(e){

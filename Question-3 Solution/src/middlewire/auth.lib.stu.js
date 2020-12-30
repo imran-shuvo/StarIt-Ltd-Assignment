@@ -21,13 +21,7 @@ const authLibStu = async (req,res,next)=>{
             if(!student&&!librarian){
                 throw new Error({error:"please login first"})
             }
-            if(student)
-                req.user  = student;
-                
-            if(librarian)
-                req.user  = librarian;
-
-            req.token = token;
+          
 
             next()
         }catch(e){

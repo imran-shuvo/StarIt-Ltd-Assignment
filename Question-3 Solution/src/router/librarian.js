@@ -27,20 +27,33 @@ librarianRouter.post('/add',async (req,res)=>{
 
 
 
-librarianRouter.get('/me',authlib,async(req,res)=>{
+librarianRouter.get('/detail/:mobileNumber',authlib,async(req,res)=>{
     try{
 
-        res.send(req.user)
+        const mobileNumber = parseInt(req.params.mobileNumber)
+        const lib =await Librarian.findOne({mobileNumber})
+        console.log(lib)
+        if(!lib||lib['access']=='no')
+            throw new Error({error:'can not find librarian'});
+        res.status(200).send(lib)
 
     }catch(e){
-        res.status(404).send(e)
+        res.status(404).send({error:'can not find librarian'})
     }
     
 })
 
-librarianRouter.patch('/me/update',authlib,async(req,res)=>{
-    const allowedUpdates = ['name'];
+librarianRouter.patch('/update/:mobileNumber',authlib,async(req,res)=>{
+
+
+    const mobileNumber = parseInt(req.params.mobileNumber)
+    const lib = await Librarian.findOne({mobileNumber})
+    if(!lib||lib['access']=='no')
+        throw new Error();
+
+    const allowedUpdates = ['name','mobileNumber'];
     const updates = Object.keys(req.body);
+
     const isAllowed = updates.every((update)=> {
         return allowedUpdates.includes(update);
     });
@@ -50,11 +63,11 @@ librarianRouter.patch('/me/update',authlib,async(req,res)=>{
 
     try{
         updates.forEach((update)=>{
-            req.user[update] = req.body[update];
+            lib[update] = req.body[update];
     
         })
-        await  req.user.save();
-        res.send(req.user)
+        await  lib.save();
+        res.status(201).send(lib)
 
     }catch(e){
         res.status(404).send({error:'update is not allowed'})
@@ -65,13 +78,18 @@ librarianRouter.patch('/me/update',authlib,async(req,res)=>{
 
 
 
-librarianRouter.delete('/me/delete',authlib,async (req,res)=>{
+librarianRouter.delete('/delete/:mobileNumber',authlib,async (req,res)=>{
     try{
-        req.user.remove();
-        res.status(200).send({done:'successfully delete user'})
+        const mobileNumber = parseInt(req.params.mobileNumber)
+        const lib =await Librarian.findOne({mobileNumber})
+        if(!lib||lib['access']=='no')
+             throw new Error();
+        lib['access'] = 'no'
+        await lib.save()
+        res.status(200).send({done:'successfully delete Librarian'})
 
     }catch(e){
-        res.status(404).send({error:"try again please"})
+        res.status(404).send({error:"can not delete this Librarian"})
     }
     
 })

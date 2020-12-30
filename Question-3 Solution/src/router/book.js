@@ -61,22 +61,24 @@ bookRouter.get('/detail/:value',authLibStu,async(req,res)=>{
     
 })
 
-bookRouter.patch('/edit/:bookName',authlib,async(req,res)=>{
+bookRouter.patch('/update/:bookName',authlib,async(req,res)=>{
     try{
         const bookName = req.params.bookName;
         const updates = Object.keys(req.body)
         const book =await Book.findOne({bookName});        
-        if(!book||book['acesss']=='no')
-            throw new Error();
+       
+        if(!book||book['access']=='no')
+            throw new Error({});
+        else{
 
         updates.forEach((update)=>{
             book[update] = req.body[update];
         })
         await book.save();
-        res.status(201).send(book)
+        res.status(201).send(book)}
 
     }catch(e){
-        res.status(404).send({error:'please login first'})
+        res.status(404).send({error:'cannot update this book'})
     }
     
 })

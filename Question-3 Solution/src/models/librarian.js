@@ -27,7 +27,11 @@ librarianSchema = new mongoose.Schema({
         }
 
 
-    }]
+    }],
+    access:{
+        type:String,
+        default:'yes'
+    }
 })
 
 librarianSchema.methods.generateAuthToken = async function(){
