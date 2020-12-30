@@ -21,22 +21,39 @@ bookRouter.post('/add/',authlib,async(req,res)=>{
 
 })
 
-bookRouter.get('/detail/',authLibStu,async(req,res)=>{
+bookRouter.get('/detail/:value',authLibStu,async(req,res)=>{
     try{
-        var book;
-        if(req.query.bookName)
-        {
-            const bookName = req.query.bookName;
-            book = await Book.findOne({bookName})
+      
+        const bookName = req.params.value;
+        const author = req.params.value;
+        console.log(req.params.value)
+       
+        const book1 = await Book.findOne({bookName})
+        const book2 = await Book.findOne({author})
+
+        
+        
+        if(book1){
+            if(book1['access']=='no')
+                throw new error()
+
+            res.status(201).send(book1)
+
         }
-        if(req.query.author)
-        {
-            const author = req.query.author;
-             book = await Book.findOne({author})
+           
+        
+        if(book2){
+            if(book2['access']=='no')
+                throw new error()
+            res.status(201).send(book2)
+
         }
-        if(!book)
-            throw new Error();
-        res.status(201).send(book)
+            
+        
+        if(!book1||!book2)
+            throw new error()
+
+        
 
     }catch(e){
         res.status(404).send({error:'book not found'})
@@ -44,12 +61,12 @@ bookRouter.get('/detail/',authLibStu,async(req,res)=>{
     
 })
 
-bookRouter.patch('/edit/:id',authlib,async(req,res)=>{
+bookRouter.patch('/edit/:bookName',authlib,async(req,res)=>{
     try{
-        const _id = req.params.id;
+        const bookName = req.params.bookName;
         const updates = Object.keys(req.body)
-        const book =await Book.findOne({_id});        
-        if(!book)
+        const book =await Book.findOne({bookName});        
+        if(!book||book['acesss']=='no')
             throw new Error();
 
         updates.forEach((update)=>{
@@ -63,13 +80,16 @@ bookRouter.patch('/edit/:id',authlib,async(req,res)=>{
     }
     
 })
-bookRouter.delete('/delete/:id',authlib,async(req,res)=>{
+bookRouter.delete('/delete/:bookName',authlib,async(req,res)=>{
     try{
-        const _id = req.params.id;
-        const book =await Book.findOne({_id});
-        if(!book)
+        const bookName = req.params.bookName;
+        const book =await Book.findOne({bookName});
+        
+        if(!book||book['access']=='no')
             throw new Error();
-        await book.remove()
+        
+        book['access'] = 'no';
+        await book.save()
         res.status(201).send({done:"successfully delete book"})
 
     }catch(e){

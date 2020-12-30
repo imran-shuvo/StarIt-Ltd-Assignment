@@ -27,7 +27,13 @@ const bookSchema = new mongoose.Schema({
     },
     date:{
         type:Date,
+        default:Date.now
     
+    },
+    access:{
+        type:String,
+        default:'yes'
+
     }
 
    
