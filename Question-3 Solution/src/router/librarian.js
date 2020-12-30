@@ -38,7 +38,7 @@ librarianRouter.get('/detail/:mobileNumber',authlib,async(req,res)=>{
         res.status(200).send(lib)
 
     }catch(e){
-        res.status(404).send({error:'can not find librarian'})
+        res.status(404).send({error:'can not find this librarian'})
     }
     
 })

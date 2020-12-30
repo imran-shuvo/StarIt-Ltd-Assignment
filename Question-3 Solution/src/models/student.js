@@ -27,7 +27,11 @@ studentSchema = new mongoose.Schema({
         }
 
 
-    }]
+    }], 
+    access:{
+        type:String,
+        default:'yes'
+    }
 })
 
 studentSchema.methods.generateAuthToken = async function(){

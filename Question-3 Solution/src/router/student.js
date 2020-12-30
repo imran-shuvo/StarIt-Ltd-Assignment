@@ -27,20 +27,31 @@ studentRouter.post('/add',async (req,res)=>{
 
 
 
-studentRouter.get('/me',authLibStu,async(req,res)=>{
+studentRouter.get('/detail/:mobileNumber',authLibStu,async(req,res)=>{
     try{
 
-        res.send(req.user)
+        const mobileNumber = parseInt(req.params.mobileNumber)
+        const stu =await Student.findOne({mobileNumber})
+        if(!stu||stu['access']=='no')
+            throw new Error({error:'can not find librarian'});
+        res.status(200).send(stu)
 
     }catch(e){
-        res.status(404).send(e)
+        res.status(404).send({error:'can not find this student'})
     }
     
 })
 
-studentRouter.patch('/me/update',authLibStu,async(req,res)=>{
-    const allowedUpdates = ['name'];
+studentRouter.patch('/update/:mobileNumber',authLibStu,async(req,res)=>{
+    const mobileNumber = parseInt(req.params.mobileNumber)
+   
+    const stu = await Student.findOne({mobileNumber})
+    if(!stu||stu['access']=='no')
+        throw new Error();
+
+    const allowedUpdates = ['name','mobileNumber'];
     const updates = Object.keys(req.body);
+
     const isAllowed = updates.every((update)=> {
         return allowedUpdates.includes(update);
     });
@@ -50,11 +61,11 @@ studentRouter.patch('/me/update',authLibStu,async(req,res)=>{
 
     try{
         updates.forEach((update)=>{
-            req.user[update] = req.body[update];
+            stu[update] = req.body[update];
     
         })
-        await  req.user.save();
-        res.send(req.user)
+        await  stu.save();
+        res.status(201).send(stu)
 
     }catch(e){
         res.status(404).send({error:'update is not allowed'})
@@ -65,13 +76,18 @@ studentRouter.patch('/me/update',authLibStu,async(req,res)=>{
 
 
 
-studentRouter.delete('/me/delete',authLibStu,async (req,res)=>{
+studentRouter.delete('/delete/:mobileNumber',authLibStu,async (req,res)=>{
     try{
-        req.user.remove();
-        res.status(200).send({done:'successfully delete user'})
+        const mobileNumber = parseInt(req.params.mobileNumber)
+        const stu = await Student.findOne({mobileNumber})
+        if(!stu||stu['access']=='no')
+          throw new Error();
+        stu['access'] = 'no'
+        await stu.save()
+        res.status(200).send({done:'successfully delete Student'})
 
     }catch(e){
-        res.status(404).send({error:"try again please"})
+        res.status(404).send({error:"can not delete this Student"})
     }
     
 })
