@@ -1,7 +1,7 @@
 const express = require('express');
 const { TokenExpiredError } = require('jsonwebtoken');
 const jwt = require('jsonwebtoken');
-const auth = require('../middlewire/auth');
+const authlib = require('../middlewire/auth.lib');
 const { update } = require('../models/librarian');
 
 const Librarian= require('../models/librarian');
@@ -27,7 +27,7 @@ librarianRouter.post('/add',async (req,res)=>{
 
 
 
-librarianRouter.get('/me',auth,async(req,res)=>{
+librarianRouter.get('/me',authlib,async(req,res)=>{
     try{
 
         res.send(req.user)
@@ -38,7 +38,7 @@ librarianRouter.get('/me',auth,async(req,res)=>{
     
 })
 
-librarianRouter.patch('/me/update',auth,async(req,res)=>{
+librarianRouter.patch('/me/update',authlib,async(req,res)=>{
     const allowedUpdates = ['name'];
     const updates = Object.keys(req.body);
     const isAllowed = updates.every((update)=> {
@@ -65,7 +65,7 @@ librarianRouter.patch('/me/update',auth,async(req,res)=>{
 
 
 
-librarianRouter.delete('/me/delete',auth,async (req,res)=>{
+librarianRouter.delete('/me/delete',authlib,async (req,res)=>{
     try{
         req.user.remove();
         res.status(200).send({done:'successfully delete user'})

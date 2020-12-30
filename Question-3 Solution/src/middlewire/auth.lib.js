@@ -1,19 +1,26 @@
 const jwt = require('jsonwebtoken');
-const User = require('../models/user')
+const Librarian = require('../models/librarian');
 
-const auth = async (req,res,next)=>{
+
+
+const authLibrarian = async (req,res,next)=>{
 
 
     try{
            
             const token = req.headers["authorization"]
-            const id =  jwt.verify(token,'token generator by imran')
-            user = await User.findOne({_id:id,'tokens.token':token})
-            if(!user){
+            const id =  jwt.verify(token,'black sheep')
+           
+            librarian = await Librarian.findOne({_id:id,'tokens.token':token})
+
+            if(!librarian){
                 throw new Error({error:"please login first"})
             }
-            req.user  = user;
+          
+           
+            req.user  = librarian;
             req.token = token;
+
             next()
         }catch(e){
             res.status(404).send({error:e})
@@ -24,5 +31,5 @@ const auth = async (req,res,next)=>{
 }
 
 
-module.exports = auth
+module.exports = authLibrarian
 

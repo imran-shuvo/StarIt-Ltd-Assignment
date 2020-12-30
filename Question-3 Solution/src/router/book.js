@@ -4,10 +4,11 @@ const Book = require('../models/book');
 const { response } = require('express');
 const { update } = require('../models/book');
 const bookRouter = express.Router();
-const auth = require('../middlewire/auth.lib');
+const authlib = require('../middlewire/auth.lib');
+const authLibStu = require('../middlewire/auth.lib.stu')
 
 
-bookRouter.post('/add/',auth,async(req,res)=>{
+bookRouter.post('/add/',authlib,async(req,res)=>{
     try{
         const book = new Book(req.body);
         await book.save();
@@ -20,7 +21,7 @@ bookRouter.post('/add/',auth,async(req,res)=>{
 
 })
 
-bookRouter.get('/detail/',async(req,res)=>{
+bookRouter.get('/detail/',authLibStu,async(req,res)=>{
     try{
         var book;
         if(req.query.bookName)
@@ -43,7 +44,7 @@ bookRouter.get('/detail/',async(req,res)=>{
     
 })
 
-bookRouter.patch('/edit/:id',auth,async(req,res)=>{
+bookRouter.patch('/edit/:id',authlib,async(req,res)=>{
     try{
         const _id = req.params.id;
         const updates = Object.keys(req.body)
@@ -62,7 +63,7 @@ bookRouter.patch('/edit/:id',auth,async(req,res)=>{
     }
     
 })
-bookRouter.delete('/delete/:id',auth,async(req,res)=>{
+bookRouter.delete('/delete/:id',authlib,async(req,res)=>{
     try{
         const _id = req.params.id;
         const book =await Book.findOne({_id});
