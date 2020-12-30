@@ -1,23 +1,23 @@
 const express = require('express');
 const { TokenExpiredError } = require('jsonwebtoken');
 const jwt = require('jsonwebtoken');
-const auth = require('../middlewire/auth');
-const { update } = require('../models/user');
+const authLibStu = require('../middlewire/auth.lib.stu');
+const { update } = require('../models/student');
 
-const User = require('../models/user');
-
-
-const userRouter = new express.Router();
+const Student = require('../models/student');
 
 
+const studentRouter = new express.Router();
 
-userRouter.post('/add',async (req,res)=>{
+
+
+studentRouter.post('/add',async (req,res)=>{
     try{
         
-        const user =  new User(req.body);
-        await user.save()
-        const token =  user.generateAuthToken();
-        res.status(200).send(user)
+        const student =  new Student(req.body)     
+        await student.save()
+        const token =  student.generateAuthToken();
+        res.status(200).send(student)
 
     }catch(e){
         res.status(404).send({error:'try again'})
@@ -26,7 +26,8 @@ userRouter.post('/add',async (req,res)=>{
 })
 
 
-userRouter.get('/me',auth,async(req,res)=>{
+
+studentRouter.get('/me',authLibStu,async(req,res)=>{
     try{
 
         res.send(req.user)
@@ -37,7 +38,7 @@ userRouter.get('/me',auth,async(req,res)=>{
     
 })
 
-userRouter.patch('/me/update',auth,async(req,res)=>{
+studentRouter.patch('/me/update',authLibStu,async(req,res)=>{
     const allowedUpdates = ['name'];
     const updates = Object.keys(req.body);
     const isAllowed = updates.every((update)=> {
@@ -64,7 +65,7 @@ userRouter.patch('/me/update',auth,async(req,res)=>{
 
 
 
-userRouter.delete('/me/delete',auth,async (req,res)=>{
+studentRouter.delete('/me/delete',authLibStu,async (req,res)=>{
     try{
         req.user.remove();
         res.status(200).send({done:'successfully delete user'})
@@ -77,4 +78,4 @@ userRouter.delete('/me/delete',auth,async (req,res)=>{
 
 
 
-module.exports = userRouter
+module.exports = studentRouter

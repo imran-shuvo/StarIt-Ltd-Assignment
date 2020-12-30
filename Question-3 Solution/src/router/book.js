@@ -1,31 +1,10 @@
 const express = require('express');
-const router = require('./user');
+const router = require('./student');
 const Book = require('../models/book');
 const { response } = require('express');
 const { update } = require('../models/book');
 const bookRouter = express.Router();
-const auth = require('../middlewire/auth');
-
-
-
-bookRouter.get('',async(req,res)=>{
-    try{
-        
-        const books = await Book.aggregate([{"$project":{ "_id":1,"title":1,"author":1}}]).limit(5);
-        // const books = await Book.find({});
-        
-        res.status(200).send(books)
-
-    }catch(e){
-        res.status(404).send({error:'error!!!no books here '})
-    }
-    
-
-})
-
-
-
-
+const auth = require('../middlewire/auth.lib');
 
 
 bookRouter.post('/add/',auth,async(req,res)=>{
@@ -41,11 +20,19 @@ bookRouter.post('/add/',auth,async(req,res)=>{
 
 })
 
-bookRouter.get('/detail/:id',async(req,res)=>{
+bookRouter.get('/detail/',async(req,res)=>{
     try{
-        const _id = req.params.id;
-        const book =await Book.findOne({_id});
-
+        var book;
+        if(req.query.bookName)
+        {
+            const bookName = req.query.bookName;
+            book = await Book.findOne({bookName})
+        }
+        if(req.query.author)
+        {
+            const author = req.query.author;
+             book = await Book.findOne({author})
+        }
         if(!book)
             throw new Error();
         res.status(201).send(book)
@@ -89,9 +76,6 @@ bookRouter.delete('/delete/:id',auth,async(req,res)=>{
     }
     
 })
-
-
-
 
 
 
